@@ -15,7 +15,7 @@ This repository contains code to solve a Dial-a-Ride Problem (DARP) using Simula
 1. Clone this repository:
 
 ```bash
-git clone <repository-link>
+git clone https://github.com/amiri-saeed/DARP.git
 ```
 
 2. Run the main script:
