@@ -1,5 +1,3 @@
-# DARP
-
 # Dial-a-Ride Problem (DARP) Optimization
 
 This repository contains code to solve a Dial-a-Ride Problem (DARP) using Simulated Annealing and Tabu Search algorithms. The code generates problem instances and runs optimization experiments across different parameter settings for the number of passengers and vehicles.
