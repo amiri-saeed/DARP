@@ -6,9 +6,9 @@ This repository contains code to solve a Dial-a-Ride Problem (DARP) using Simula
 
 - Python 3.x
 - Required packages:
-
+```
   pip install numpy matplotlib networkx
-
+```
 ## Running the Experiments
 
 1. Use the code files contained inside the folder. There should be four files on the root (figs folder, instance_generation folder, solver folder, main.py file)
