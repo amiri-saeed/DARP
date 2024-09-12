@@ -1,13 +1,12 @@
 from solver.cost_computation import *
-from solver.SimAnAlg import enhanced_neighbor_solution
+import random
 
 
-
-def tabu_search(Vehicles, Requests, G, initial_solution, RemovedPassengers, tabu_size=5, max_iter=1000):
+def tabu_search(Vehicles, Requests, G, initial_solution, RemovedPassengers, tabu_size, max_iter):
     # Initial setup
     current_solution = initial_solution
     path_vectors = HopSequences(Vehicles, Requests, current_solution, G)
-    current_cost = cost_function(path_vectors, RemovedPassengers=0, graph=G, Requests=Requests)
+    current_cost = cost_function(path_vectors, RemovedPassengers, graph=G, Requests=Requests)
     best_solution = current_solution
     best_cost = current_cost
 
@@ -18,9 +17,9 @@ def tabu_search(Vehicles, Requests, G, initial_solution, RemovedPassengers, tabu
     
     for iteration in range(max_iter):
         # Generate a neighboring solution
-        neighbor_solution = enhanced_neighbor_solution(current_solution)
+        neighbor_solution = generate_neighbor(current_solution)
         neighbor_path_vectors = HopSequences(Vehicles, Requests, neighbor_solution, G)
-        neighbor_cost = cost_function(neighbor_path_vectors, RemovedPassengers=0, graph=G, Requests=Requests)
+        neighbor_cost = cost_function(neighbor_path_vectors, RemovedPassengers, graph=G, Requests=Requests)
 
         # Check if the neighbor is the best solution found so far
         if neighbor_cost < best_cost:
@@ -41,3 +40,25 @@ def tabu_search(Vehicles, Requests, G, initial_solution, RemovedPassengers, tabu
     # print("TABU LIST:", tabu_list)
     
     return best_solution, best_cost, costs
+
+def generate_neighbor(solution):
+    """
+    Generate a neighboring solution by randomly swapping requests between vehicles.
+    """
+    neighbor_solution = [list(sol) for sol in solution]  # Copy the current solution
+    # Choose two random vehicles
+    vehicle1, vehicle2 = random.sample(range(len(solution)), 2) # Picks to random vehicles from the ones available on the solution
+
+    if neighbor_solution[vehicle1] and neighbor_solution[vehicle2]: # Checks that both of the vehicles have a request assigned
+        
+        request1 = random.choice(neighbor_solution[vehicle1]) # Picks randomly a request from the list of vehicle1
+        request2 = random.choice(neighbor_solution[vehicle2]) # Picks randomly a request from the list of vehicle2
+
+        # Swap the requests between vehicles
+        neighbor_solution[vehicle1].remove(request1)
+        neighbor_solution[vehicle2].remove(request2)
+
+        neighbor_solution[vehicle1].append(request2)
+        neighbor_solution[vehicle2].append(request1)
+
+    return neighbor_solution
