@@ -18,7 +18,7 @@ This repository contains code to solve a Dial-a-Ride Problem (DARP) using Simula
 ** The weights considered on the cost function could also be changed/adjusted as desiered, for doing so, the parameters will need to be adjusted for each function on the the cost_computation.py file at the inside of the solver folder. 
 
 3. Once the parameters have already being set, execute the main and wait to visualize the printed results. 
-```
+
 The script will generate problem instances, run Simulated Annealing and Tabu Search algorithms, and display plots of costs over iterations. Results for different combinations of passengers and vehicles will also be printed.
 
 ## Output
