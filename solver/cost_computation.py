@@ -142,7 +142,7 @@ def cost_function(path_vectors, RemovedPassengers, graph, Requests, w_d = 0.3, w
     penalty = RemovedPassengers * mu1
     total_cost += penalty
     
-    print(f"Total cost: {total_cost}")
+    #print(f"Total cost: {total_cost}")
     return total_cost
     
     
