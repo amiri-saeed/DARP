@@ -1,5 +1,4 @@
 import networkx as nx
-import copy
 
 
 def HopSequences(Vehicles, Requests, Solution, graph):
@@ -44,6 +43,12 @@ def compute_path(Vehicle_Requests, graph, Vehicle):
     current_node = Vehicle[0]
 
 
+    # Until every request is completed, check every iteration the minimum distance between the location of the vehicle and:
+    # 1. The starting points of new requests (pickup points)
+    # 2. The arrival points of request already picked up (delivery points)
+    
+    # Then move towards the nearest location chosen
+    
     # while current_node != last_stop:
     while set(delivered) != all_stops:
         
@@ -70,6 +75,7 @@ def compute_path(Vehicle_Requests, graph, Vehicle):
         
         current_node = path[-1]
                 
+                # If a delivery was chosen append also the string to say something was delivered (useful for cost computation)
         if min_path[1] == 1:
             path.append(f"Dlvr {min_path[0]}") #delivery
             
@@ -78,6 +84,7 @@ def compute_path(Vehicle_Requests, graph, Vehicle):
                     Vehicle_Requests[1].remove(element)
                     delivered.append(element)
 
+                # If a pickup was chosen append also the string to say something was picked up (useful for cost computation)
         if min_path[1] == 0:
             path.append(f"Pck {min_path[0]}")   #pickup
             for element in Vehicle_Requests[0]:
@@ -88,30 +95,37 @@ def compute_path(Vehicle_Requests, graph, Vehicle):
         
     return path
             
-        
+    # Cost used in the dijkstra path function
 def PathCost(u,v,d, w_d = 0.3, w_t = 0.7):
     return w_d * d['distance_cost'] + w_t * d['time_cost']
     
-    
+    # Objective function used to evaulate the solutions
 def cost_function(path_vectors, RemovedPassengers, graph, Requests, w_d = 0.3, w_t = 0.7, mu1 = 0.1):
     total_cost = 0
         
+        # Iterate between all paths of all vehicles
     for path in path_vectors:
         time = 0
         last_break = 0
         i=0
         while i+1 < len(path):
+            
+            # Keep track of current and next node
             current_node = path[i]
             next_node = path[i + 1]
             
+                # If a pickup node is found, call process_stop to remove it from the path and check for time penalties
             if str(next_node).startswith('Pck'):
                 returnValue = process_stop(path[last_break : i+1], 1, time, Requests)
                 if returnValue != None:
+                    # Upgrade the cost with the penalty
                     total_cost += returnValue
                     last_break = i+1
                 path.remove(path[i+1])
                 next_node = path[i]
                 current_node = path[i-1]
+                
+                # Same as pickup
                 
             elif str(next_node).startswith('Dlvr'):
                 returnValue = process_stop(path[last_break : i+1], 0, time, Requests)
@@ -158,6 +172,7 @@ def process_stop(path, flag, time, Requests, early_dlr_pnt = 0.05, late_dlr_pnt 
         earliest_pck = element[2][2]
         latest_pck = element[2][3]
                 
+            # delivery penalties
         if flag == 1:
             if element[0] == path[-1]:
                 
@@ -168,7 +183,7 @@ def process_stop(path, flag, time, Requests, early_dlr_pnt = 0.05, late_dlr_pnt 
                 else:
                     return (time - latest_dlr) * late_dlr_pnt
                             
-                    
+            # pickup penalties       
         else:
             if element[1] == path[-1]:
                 if earliest_pck < time < latest_pck:
